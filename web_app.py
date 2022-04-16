@@ -1,3 +1,6 @@
+# // CODE FOR DEPLOYING THE APP ON STREMLIT // 
+# // THE LSTM MODEL CODE IS  ON ANOTHER REPO //
+# // UNSUPERVISED LEARNING-RNN //
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -7,6 +10,7 @@ import datetime as dt
 from nsepy import get_history
 import io
 
+#Initializing the start and end date for the data
 start_date =  dt.datetime(2000, 1,1)
 end_date =  dt.datetime(2021, 4, 30)
 
@@ -15,15 +19,21 @@ st.text('with LSTM Model(multi-variate)')
 
 
 st.caption('Enter Indian stocks that exists from 2000 - 2021')
+
+# by default the ticker has the value of "AXISBANK"
 user_input = st.text_input('Enter Stock Ticker', 'AXISBANK')
 raw_data = get_history(symbol = user_input, start = start_date, end = end_date)
 df = raw_data.copy()
+
+# drop the variables that are un-neccesary IMO
 to_drop = [ 'Symbol', 'Series', 'Prev Close', 'Last', 'VWAP', 'Turnover',  'Trades', 'Deliverable Volume', '%Deliverble']
 df = df.drop(to_drop, axis = 1)
 
-#DESCRIBE THE DATE
+# DESCRIBE THE DATE
 st.subheader("Data from 2000 - '21")
 st.write(df.describe())
+
+# // optional //
 
 #EXTRACT THE INFO
 #buffer = io.StringIO()
@@ -32,7 +42,7 @@ st.write(df.describe())
 #st.text(s)
 
 
-#VISUALIZE THE CLOSING PRICE
+#VISUALIZE THE OPENING PRICE
 st.subheader('Open Price vs Time Chart')
 fig = plt.figure(figsize = (12,6))
 plt.plot(df.Open, label = 'Open Price')
@@ -83,7 +93,7 @@ for i in range(n_past, len(scaled_df_for_training) - n_future + 1):
 #CONVERT X_TRAIN AND Y_TRAIN INTO ARRAYS(they're in list form)
 x_train, y_train = np.array(x_train), np.array(y_train)
 
-#LOAD THE LSTM MODEL WITH .H5 FORMAT
+#LOAD THE LSTM MODEL WITH .H5 FORMAT, available in the same repository
 model = load_model('RNN_MODEL.h5')
 
 #extract dates from raw_data
@@ -112,6 +122,7 @@ df_predict = pd.DataFrame({'Date': np.array(predict_dates), 'Open': y_pred_futur
 df_predict['Date'] = pd.to_datetime(df_predict['Date'])
 
 original = raw_data[['Open']]
+# // code snippet from LSTM model that won't work here
 #original['Date'] = pd.date_range(start = start_date, end = end_date)
 # for visiualization we'll look at graph from a early stage
 #original = original.loc[original['Date'] >= '2018-5-1']
